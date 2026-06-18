@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Mundial Match Notifier API",
+  "version": "1.0.0",
+  "description": "Extensión local de Chrome que consulta una API externa pública del Mundial y notifica 10 minutos antes del próximo partido.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://raw.githubusercontent.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Mundial Notifier API"
+  },
+  "icons": {
+    "128": "icon128.png"
+  }
+}
