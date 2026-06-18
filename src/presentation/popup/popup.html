@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Mundial Notifier API</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="./popup.css" />
 </head>
 <body>
   <main class="card">
     <h1>Mundial Notifier</h1>
-    <p class="subtitle">Consulta una API externa pública y avisa 10 minutos antes.</p>
+    <p class="subtitle">
+      Consulta una API externa pública y avisa 10 minutos antes.
+    </p>
 
     <section id="matchBox" class="match-box">
       Cargando próximo partido...
     </section>
 
     <button id="refreshBtn">Actualizar próximo partido</button>
+    <button id="directTestBtn" class="success">Notificación directa ahora</button>
     <button id="testBtn" class="secondary">Probar notificación en 1 minuto</button>
     <button id="clearTestBtn" class="danger">Borrar pruebas</button>
 
@@ -23,6 +26,6 @@
     </p>
   </main>
 
-  <script src="popup.js"></script>
+  <script type="module" src="./popup.js"></script>
 </body>
 </html>

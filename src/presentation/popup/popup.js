@@ -1,10 +1,22 @@
+import { MESSAGE_TYPES } from "../../shared/message-types.js";
+
+/*
+  popup.js
+  Capa de presentación/controlador.
+
+  Su trabajo es escuchar la interacción del usuario y comunicarse con
+  el service worker usando chrome.runtime.sendMessage.
+*/
+
 document.addEventListener("DOMContentLoaded", async () => {
   const matchBox = document.getElementById("matchBox");
   const refreshBtn = document.getElementById("refreshBtn");
+  const directTestBtn = document.getElementById("directTestBtn");
   const testBtn = document.getElementById("testBtn");
   const clearTestBtn = document.getElementById("clearTestBtn");
 
   refreshBtn.addEventListener("click", loadNextMatch);
+  directTestBtn.addEventListener("click", showDirectNotification);
   testBtn.addEventListener("click", createTestMatch);
   clearTestBtn.addEventListener("click", clearTestMatches);
 
@@ -14,17 +26,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     matchBox.textContent = "Consultando API externa...";
 
     const response = await chrome.runtime.sendMessage({
-      type: "RESCHEDULE"
+      type: MESSAGE_TYPES.RESCHEDULE
     });
 
     renderResponse(response);
+  }
+
+  async function showDirectNotification() {
+    matchBox.textContent = "Mostrando notificación directa...";
+
+    const response = await chrome.runtime.sendMessage({
+      type: MESSAGE_TYPES.SHOW_DIRECT_NOTIFICATION
+    });
+
+    if (!response || !response.ok) {
+      renderResponse(response);
+      return;
+    }
+
+    matchBox.innerHTML = `
+      <strong>Prueba enviada</strong>
+      <p>${escapeHtml(response.message)}</p>
+      <p>Si no aparece, revisa permisos de notificación en Chrome o en tu sistema operativo.</p>
+    `;
   }
 
   async function createTestMatch() {
     matchBox.textContent = "Creando partido de prueba...";
 
     const response = await chrome.runtime.sendMessage({
-      type: "CREATE_TEST_MATCH"
+      type: MESSAGE_TYPES.CREATE_TEST_MATCH
     });
 
     renderResponse(response);
@@ -34,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     matchBox.textContent = "Borrando pruebas...";
 
     const response = await chrome.runtime.sendMessage({
-      type: "CLEAR_TEST_MATCHES"
+      type: MESSAGE_TYPES.CLEAR_TEST_MATCHES
     });
 
     if (response && response.ok) {
@@ -49,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response || !response.ok) {
       matchBox.innerHTML = `
         <strong>Error</strong>
-        <p>${response?.error || "No se pudo obtener información."}</p>
+        <p>${escapeHtml(response?.error || "No se pudo obtener información.")}</p>
       `;
       return;
     }
@@ -57,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.nextMatch) {
       matchBox.innerHTML = `
         <strong>Sin partidos futuros</strong>
-        <p>${response.message || "La API no tiene partidos futuros disponibles."}</p>
+        <p>${escapeHtml(response.message || "La API no tiene partidos futuros disponibles.")}</p>
       `;
       return;
     }
